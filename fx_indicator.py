@@ -14,11 +14,11 @@ apikey = '2GGORTBXQIFSR2AF'
 
 #  Загружаем данные
 
-# data_1h_load = av.get_fx_intraday(from_symbol, to_symbol, interval, outputsize, apikey)
-# data_1d_load = av.get_fx_daily(from_symbol, to_symbol, outputsize, apikey)
+data_1h_load = av.get_fx_intraday(from_symbol, to_symbol, interval, outputsize, apikey)
+data_1d_load = av.get_fx_daily(from_symbol, to_symbol, outputsize, apikey)
 
-# data_1h_load.to_csv(f'{from_symbol}{to_symbol}_1h.csv')
-# data_1d_load.to_csv(f'{from_symbol}{to_symbol}_1d.csv')
+data_1h_load.to_csv(f'{from_symbol}{to_symbol}_1h.csv')
+data_1d_load.to_csv(f'{from_symbol}{to_symbol}_1d.csv')
 
 # Читаем данные
 
@@ -96,6 +96,28 @@ delta_1d = poly_1d_res - poly_1d_f
 macd_1h = get_macd(poly_1h_res, 26, 12, 9)
 macd_1d = get_macd(poly_1d_res, 26, 12, 9)
 
+#  Условие
+
+def status_transaction():
+
+    if delta_1h.tail(1)[0] > 0 and delta_1d.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]:
+        return f'Открыть / держать длинную позицию (краткосрок / долгосрок) по {from_symbol}/{to_symbol}'
+    elif delta_1h.tail(1)[0] < 0 and delta_1d.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]:
+        return f'Открыть / держать короткую позицию (краткосрок / долгосрок) по {from_symbol}/{to_symbol}'
+    elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]:
+        return f'Открыть / держать длинную позицию долгосрочно по {from_symbol}/{to_symbol}. Краткосрочно  - коррекция'
+    elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]:
+        return f'Открыть / держать короткую позицию долгосрочно по {from_symbol}/{to_symbol}. Краткосрочно  - коррекция' 
+    elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0]:
+        return f'Открыть / держать длинную позицию краткосрочно по {from_symbol}/{to_symbol}. Долгосрочно  - коррекция'
+    elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0]:
+        return f'Открыть / держать короткую позицию краткосрочно по {from_symbol}/{to_symbol}. Долгосрочно  - коррекция'
+    else:
+        return f'Закрыть позицию / без позиции по {from_symbol}/{to_symbol}'
+
+status = status_transaction()
+print(status)
+
 # Строим график
 
 fig = make_subplots(rows=2, cols=2, row_heights=[0.4, 0.6], column_widths=[0.5, 0.5])
@@ -144,7 +166,7 @@ fig.append_trace(go.Scatter(x=delta_1d.index,
                             name='Delta_1d'), 
                             row=1, col=2)
 
-fig.update_layout(title=f'{from_symbol}{to_symbol}',
+fig.update_layout(title=f'{from_symbol}/{to_symbol}. Рекомендация - {status}',
                   margin=dict(l=100, r=100, t=100, b=100),
                   hovermode="x",
                   legend_orientation="v",
