@@ -3,32 +3,36 @@ import numpy.polynomial.polynomial as poly
 import yfinance as yf
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
+import AlphaVantage as av
 
 
-tickers = 'EURUSD=X'
+from_symbol = 'EUR'
+to_symbol = 'USD'
+interval = '60min' # 1min, 5min, 15min, 30min, 60min
+outputsize = 'compact' # Optional compact or full
+apikey = '2GGORTBXQIFSR2AF'
 
 #  Загружаем данные
 
-# data_1H_load = yf.download(tickers =tickers, period ='1mo', interval = '1h')
-# data_1d_load = yf.download(tickers =tickers, period ='1y', interval = '1d')
+# data_1h_load = av.get_fx_intraday(from_symbol, to_symbol, interval, outputsize, apikey)
+# data_1d_load = av.get_fx_daily(from_symbol, to_symbol, outputsize, apikey)
 
-# data_1H_read = pd.DataFrame(data_1H_load)
-# data_1d_read = pd.DataFrame(data_1d_load)
-
-# data_1H_read.to_csv(f'{tickers}_1H.csv')
-# data_1d_read.to_csv(f'{tickers}_1d.csv')
+# data_1h_load.to_csv(f'{from_symbol}{to_symbol}_1h.csv')
+# data_1d_load.to_csv(f'{from_symbol}{to_symbol}_1d.csv')
 
 # Читаем данные
 
-data_1H = pd.read_csv(f'{tickers}_1H.csv')
-data_1d = pd.read_csv(f'{tickers}_1d.csv')
+data_1h = pd.read_csv(f'{from_symbol}{to_symbol}_1h.csv')
+data_1d = pd.read_csv(f'{from_symbol}{to_symbol}_1d.csv')
+data_1h = data_1h.iloc[::-1]
+data_1d = data_1d.iloc[::-1]
 
-data_1H.set_index('Unnamed: 0', inplace=True)
+data_1h.set_index('Date', inplace=True)
 data_1d.set_index('Date', inplace=True)
 
 # Рассчитываем полином и Osma
 
-data_1H_poly = list()
+data_1h_poly = list()
 data_1d_poly = list()
 
 data_1H_poly_f = list()
@@ -80,55 +84,52 @@ def get_macd(price, slow, fast, smooth):
 
 # Получаем значения индикаторов (полином и Osma)
 
-poly_1H_res = get_polinom(data_1H['Close'], 50, 2, data_1H_poly)
-poly_1d_res = get_polinom(data_1d['Close'], 50, 2, data_1d_poly)
+poly_1h_res = get_polinom(data_1h['close'], 50, 2, data_1h_poly)
+poly_1d_res = get_polinom(data_1d['close'], 50, 2, data_1d_poly)
 
-poly_1H_f = get_polinom_f(data_1H['Close'], 50, 2, data_1H_poly_f)
-poly_1d_f = get_polinom_f(data_1d['Close'], 50, 2, data_1d_poly_f)
+poly_1h_f = get_polinom_f(data_1h['close'], 50, 2, data_1H_poly_f)
+poly_1d_f = get_polinom_f(data_1d['close'], 50, 2, data_1d_poly_f)
 
-delta_1H = poly_1H_res - poly_1H_f
+delta_1h = poly_1h_res - poly_1h_f
 delta_1d = poly_1d_res - poly_1d_f
 
-macd_1H = get_macd(poly_1H_res, 26, 12, 9)
+macd_1h = get_macd(poly_1h_res, 26, 12, 9)
 macd_1d = get_macd(poly_1d_res, 26, 12, 9)
-
 
 # Строим график
 
-fig = make_subplots(rows=3, cols=2, row_heights=[0.3, 0.1, 0.6], column_widths=[0.5, 0.5])
+fig = make_subplots(rows=2, cols=2, row_heights=[0.4, 0.6], column_widths=[0.5, 0.5])
 
-fig.append_trace(go.Candlestick(x=data_1H.index,
-                open=data_1H['Open'],
-                high=data_1H['High'],
-                low=data_1H['Low'],
-                close=data_1H['Close'], name = 'market data_1H'), row=3, col=1)
+fig.append_trace(go.Candlestick(x=data_1h.index,
+                open=data_1h['open'],
+                high=data_1h['high'],
+                low=data_1h['low'],
+                close=data_1h['close'], name = 'market data_1H'), row=2, col=1)
 
-fig.append_trace(go.Scatter(x=poly_1H_res.index, y=poly_1H_res, mode='lines', name='Polynom_1H'),row=3, col=1)
-fig.append_trace(go.Scatter(x=poly_1H_f.index, y=poly_1H_f, mode='lines', name='Polynom_f_1H'), row=3, col=1)
+fig.append_trace(go.Scatter(x=poly_1h_res.index, y=poly_1h_res, mode='lines', name='Polynom_1H'),row=2, col=1)
+fig.append_trace(go.Scatter(x=poly_1h_f.index, y=poly_1h_f, mode='lines', name='Polynom_f_1H'), row=2, col=1)
 
-fig.append_trace(go.Bar(x=macd_1H['Hist'].index, 
-                        y=macd_1H['Hist'], 
-                        marker=dict(color =macd_1H['Hist'], colorscale='RdYlGn'),
+fig.append_trace(go.Bar(x=macd_1h['Hist'].index, 
+                        y=macd_1h['Hist'], 
+                        marker=dict(color =macd_1h['Hist'], colorscale='RdYlGn'),
                         name='Osma_1H'), 
                         row=1, col=1)
 
-fig.append_trace(go.Scatter(x=delta_1H.index, 
-                            y=delta_1H, 
+fig.append_trace(go.Scatter(x=delta_1h.index, 
+                            y=delta_1h, 
                             line=dict(color ='#5aba47'),
                             mode='lines', 
-                            # marker=dict(size=8, color=delta_1H, colorscale='RdYlGn'),
                             name='Delta_1H'), 
                             row=1, col=1)
 
-
 fig.append_trace(go.Candlestick(x=data_1d.index,
-                open=data_1d['Open'],
-                high=data_1d['High'],
-                low=data_1d['Low'],
-                close=data_1d['Close'], name = 'market data_1D'), row=3, col=2)
+                open=data_1d['open'],
+                high=data_1d['high'],
+                low=data_1d['low'],
+                close=data_1d['close'], name = 'market data_1D'), row=2, col=2)
 
-fig.append_trace(go.Scatter(x=poly_1d_res.index, y=poly_1d_res, mode='lines', name='Polynom_1d'),row=3, col=2)
-fig.append_trace(go.Scatter(x=poly_1d_f.index, y=poly_1d_f, mode='lines', name='Polynom_f_1d'), row=3, col=2)
+fig.append_trace(go.Scatter(x=poly_1d_res.index, y=poly_1d_res, mode='lines', name='Polynom_1d'),row=2, col=2)
+fig.append_trace(go.Scatter(x=poly_1d_f.index, y=poly_1d_f, mode='lines', name='Polynom_f_1d'), row=2, col=2)
 
 fig.append_trace(go.Bar(x=macd_1d['Hist'].index, 
                         y=macd_1d['Hist'], 
@@ -143,23 +144,22 @@ fig.append_trace(go.Scatter(x=delta_1d.index,
                             name='Delta_1d'), 
                             row=1, col=2)
 
-
-fig.update_layout(title=f'{tickers}',
-                  margin=dict(l=100, r=100, t=50, b=50),
+fig.update_layout(title=f'{from_symbol}{to_symbol}',
+                  margin=dict(l=100, r=100, t=100, b=100),
                   hovermode="x",
                   legend_orientation="v",
                 )
 
-
 fig.update_xaxes(
-        rangeslider_visible=True,
+        rangeslider_visible=False,
         rangebreaks=[dict(bounds=["sat", "mon"])],
-        # zeroline=True, zerolinewidth=2, zerolinecolor='#000000',
-    )
-# fig.update_xaxes(
-#         rangeslider_visible=True,
-#         rangebreaks=[dict(bounds=["sat", "mon"])],
-#         row=5
-#     )
+        rangeselector = dict(
+        buttons = list([
+            dict(count = 1, label = '1H', step = 'hour', stepmode = 'backward'),
+            dict(count = 1, label = '1D', step = 'day', stepmode = 'backward'),
+            dict(count = 1, label = '1M', step = 'month', stepmode = 'todate'),
+            dict(count = 6, label = '6M', step = 'month', stepmode = 'backward'),
+            dict(step = 'all')])))
+
 
 fig.show()
