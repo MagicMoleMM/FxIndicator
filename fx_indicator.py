@@ -1,13 +1,12 @@
 import pandas as pd
 import numpy.polynomial.polynomial as poly
-import yfinance as yf
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import AlphaVantage as av
 
 
-from_symbol = 'AUD'
-to_symbol = 'USD'
+from_symbol = 'USD'
+to_symbol = 'CAD'
 interval = '60min' # 1min, 5min, 15min, 30min, 60min
 outputsize = 'compact' # Optional compact or full
 apikey = '2GGORTBXQIFSR2AF'
@@ -17,13 +16,13 @@ apikey = '2GGORTBXQIFSR2AF'
 data_1h_load = av.get_fx_intraday(from_symbol, to_symbol, interval, outputsize, apikey)
 data_1d_load = av.get_fx_daily(from_symbol, to_symbol, outputsize, apikey)
 
-data_1h_load.to_csv(f'{from_symbol}{to_symbol}_1h.csv')
-data_1d_load.to_csv(f'{from_symbol}{to_symbol}_1d.csv')
+data_1h_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1h.csv')
+data_1d_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1d.csv')
 
 # Читаем данные
 
-data_1h = pd.read_csv(f'{from_symbol}{to_symbol}_1h.csv')
-data_1d = pd.read_csv(f'{from_symbol}{to_symbol}_1d.csv')
+data_1h = pd.read_csv(f'Data_fx/{from_symbol}{to_symbol}_1h.csv')
+data_1d = pd.read_csv(f'Data_fx/{from_symbol}{to_symbol}_1d.csv')
 data_1h = data_1h.iloc[::-1]
 data_1d = data_1d.iloc[::-1]
 
@@ -101,19 +100,23 @@ macd_1d = get_macd(poly_1d_res, 26, 12, 9)
 def status_transaction():
 
     if delta_1h.tail(1)[0] > 0 and delta_1d.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]:
-        return f'Открыть / держать длинную позицию (краткосрок / долгосрок) по {from_symbol}/{to_symbol}'
+        return f'Держать длинную позицию (краткосрок / долгосрок) по {from_symbol}/{to_symbol}'
     elif delta_1h.tail(1)[0] < 0 and delta_1d.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]:
-        return f'Открыть / держать короткую позицию (краткосрок / долгосрок) по {from_symbol}/{to_symbol}'
+        return f'Держать короткую позицию (краткосрок / долгосрок) по {from_symbol}/{to_symbol}'
+    elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0]:
+        return f'Держать длинную позицию долгосрочно по {from_symbol}/{to_symbol}. Краткосрочно  - коррекция, возможно открытие краткосрочной короткой позиции'
     elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]:
-        return f'Открыть / держать длинную позицию долгосрочно по {from_symbol}/{to_symbol}. Краткосрочно  - коррекция'
+        return f'Держать длинную позицию долгосрочно по {from_symbol}/{to_symbol}. Краткосрочно  - коррекция'
+    elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0]:
+        return f'Держать короткую позицию долгосрочно по {from_symbol}/{to_symbol}. Краткосрочно  - коррекция, возможно открытие краткосрочной длинной позиции' 
     elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]:
-        return f'Открыть / держать короткую позицию долгосрочно по {from_symbol}/{to_symbol}. Краткосрочно  - коррекция' 
+        return f'Держать короткую позицию долгосрочно по {from_symbol}/{to_symbol}. Краткосрочно  - коррекция' 
     elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0]:
-        return f'Открыть / держать длинную позицию краткосрочно по {from_symbol}/{to_symbol}. Долгосрочно  - коррекция'
+        return f'Держать длинную позицию краткосрочно по {from_symbol}/{to_symbol}. Долгосрочно  - коррекция'
     elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0]:
-        return f'Открыть / держать короткую позицию краткосрочно по {from_symbol}/{to_symbol}. Долгосрочно  - коррекция'
+        return f'Держать короткую позицию краткосрочно по {from_symbol}/{to_symbol}. Долгосрочно  - коррекция'
     else:
-        return f'Закрыть позицию / без позиции по {from_symbol}/{to_symbol}'
+        return f'Без позиции по {from_symbol}/{to_symbol}'
 
 status = status_transaction()
 print(status)
