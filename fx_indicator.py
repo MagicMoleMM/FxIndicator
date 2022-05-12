@@ -6,7 +6,7 @@ from plotly.subplots import make_subplots
 import AlphaVantage as av
 
 
-from_symbol = 'EUR'
+from_symbol = 'AUD'
 to_symbol = 'USD'
 interval = '60min' # 1min, 5min, 15min, 30min, 60min
 outputsize = 'compact' # Optional compact or full
@@ -27,8 +27,8 @@ data_1d = pd.read_csv(f'{from_symbol}{to_symbol}_1d.csv')
 data_1h = data_1h.iloc[::-1]
 data_1d = data_1d.iloc[::-1]
 
-data_1h.set_index('Date', inplace=True)
-data_1d.set_index('Date', inplace=True)
+data_1h.set_index('timestamp', inplace=True)
+data_1d.set_index('timestamp', inplace=True)
 
 # Рассчитываем полином и Osma
 
