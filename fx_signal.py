@@ -25,7 +25,7 @@ def job():
         to_symbol = fx[3:6]
         interval = '60min' 
         outputsize = 'compact' 
-        apikey = '2GGORTBXQIFSR2AF'
+        apikey = '2GGORTBXQIFSRbla'
 
         #  Загружаем данные
 

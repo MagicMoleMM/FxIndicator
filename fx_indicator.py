@@ -9,7 +9,7 @@ from_symbol = 'USD'
 to_symbol = 'CHF'
 interval = '60min' # 1min, 5min, 15min, 30min, 60min
 outputsize = 'compact' # Optional compact or full
-apikey = '2GGORTBXQIFSR2AF'
+apikey = '2GGORTBXQIFSRbla'
 
 #  Загружаем данные
 
