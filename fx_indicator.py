@@ -6,7 +6,7 @@ import AlphaVantage as av
 
 
 from_symbol = 'USD'
-to_symbol = 'CAD'
+to_symbol = 'CHF'
 interval = '60min' # 1min, 5min, 15min, 30min, 60min
 outputsize = 'compact' # Optional compact or full
 apikey = '2GGORTBXQIFSR2AF'
@@ -95,6 +95,8 @@ delta_1d = poly_1d_res - poly_1d_f
 macd_1h = get_macd(poly_1h_res, 26, 12, 9)
 macd_1d = get_macd(poly_1d_res, 26, 12, 9)
 
+
+
 #  Условие
 
 def status_transaction():
@@ -140,6 +142,12 @@ fig.append_trace(go.Bar(x=macd_1h['Hist'].index,
                         name='Osma_1H'), 
                         row=1, col=1)
 
+fig.append_trace(go.Bar(x=macd_1h['MACD'].index, 
+                        y=macd_1h['MACD'], 
+                        marker=dict(color =macd_1h['MACD'], colorscale='speed'),
+                        name='MACD_1H'), 
+                        row=1, col=1)                       
+
 fig.append_trace(go.Scatter(x=delta_1h.index, 
                             y=delta_1h, 
                             line=dict(color ='#5aba47'),
@@ -161,6 +169,12 @@ fig.append_trace(go.Bar(x=macd_1d['Hist'].index,
                         marker=dict(color =macd_1d['Hist'], colorscale='RdYlGn'), 
                         name='Osma_1d'), 
                         row=1, col=2)
+
+fig.append_trace(go.Bar(x=macd_1d['MACD'].index, 
+                        y=macd_1d['MACD'], 
+                        marker=dict(color =macd_1d['MACD'], colorscale='speed'), 
+                        name='MACD_1d'), 
+                        row=1, col=2)                        
 
 fig.append_trace(go.Scatter(x=delta_1d.index, 
                             y=delta_1d,

@@ -12,5 +12,5 @@ def telegram_bot_sendtext(bot_message):
 
     return response.json()
 
-s = 'some message'
+s = 'Привет!'
 telegram_bot_sendtext(s)

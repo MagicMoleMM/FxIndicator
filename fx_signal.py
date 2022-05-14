@@ -138,19 +138,19 @@ def job():
 
             if (delta_1d.tail(1)[0] > 0 and delta_1d.tail(2)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]) or (delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] < macd_1d['Hist'].tail(3)[0]):
 
-                return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию {time.ctime(time.time())} по цене {data_1d["close"].tail(1)[0]}'
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию по цене открытия дня {data_1d["open"].tail(1)[0]}'
             
             elif (delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]) or (delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0]):
 
-                return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию {time.ctime(time.time())} по цене {data_1d["close"].tail(1)[0]}'
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене открытия дня {data_1d["open"].tail(1)[0]}'
             
             elif (delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]) or (delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0]):
 
-                return f'{from_symbol}/{to_symbol} долгосрок - закрыть длинную позицию {time.ctime(time.time())} по цене {data_1d["close"].tail(1)[0]}'
+                return f'{from_symbol}/{to_symbol} долгосрок - закрыть длинную позицию по цене открытия дня {data_1d["open"].tail(1)[0]}'
             
             elif (delta_1d.tail(1)[0] > 0 and delta_1d.tail(2)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]) or (delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] < macd_1d['Hist'].tail(3)[0]):
 
-                return f'{from_symbol}/{to_symbol} долгосрок - закрыть короткую позицию {time.ctime(time.time())} по цене {data_1d["close"].tail(1)[0]}'
+                return f'{from_symbol}/{to_symbol} долгосрок - закрыть короткую позицию по цене открытия дня {data_1d["open"].tail(1)[0]}'
             
             else:
                 return f'{from_symbol}/{to_symbol} долгосрок - нет сигналов'
@@ -178,21 +178,19 @@ def job():
 
         
         print(time.ctime(time.time()))
-        tg.telegram_bot_sendtext(time.ctime(time.time()))
 
         status = status_transaction()
         print(status)
-        tg.telegram_bot_sendtext(status)
 
         signal_short = signal_short_term()
         print(signal_short)
-        tg.telegram_bot_sendtext(signal_short)
 
         signal_long = signal_long_term()
         print(signal_long)
-        tg.telegram_bot_sendtext(signal_long)
 
-        time.sleep(60)
+        tg.telegram_bot_sendtext(f'{time.ctime(time.time())},\n{status},\n{signal_long},\n{signal_short}')
+
+        time.sleep(30)
 
 job()
 
