@@ -25,7 +25,7 @@ def job():
         to_symbol = fx[3:6]
         interval = '60min' 
         outputsize = 'compact' 
-        apikey = '2GGORTBXQIFSRbla'
+        apikey = '2GGORTBXQIFSR2AF'
 
         #  Загружаем данные
 
@@ -115,81 +115,192 @@ def job():
 
         def signal_short_term():
 
-            if (delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0]) or (delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0]):
+            # Открыть длинную позицию
 
-                return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию {time.ctime(time.time())} по цене {data_1h["close"].tail(1)[0]}'
+            if delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
             
-            elif (delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0]) or (delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0]):
+            elif  delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] > 0:
 
-                return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию {time.ctime(time.time())} по цене {data_1h["close"].tail(1)[0]}'
+                return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            elif  delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] > 0:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
             
-            elif (delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0]) or (delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0]):
-
-                return f'{from_symbol}/{to_symbol} краткосрок - закрыть длинную позицию {time.ctime(time.time())} по цене {data_1h["close"].tail(1)[0]}'
+            # Открыть короткую позицию
             
-            elif (delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0]) or (delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0]):
+            elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
 
-                return f'{from_symbol}/{to_symbol} краткосрок - закрыть короткую позицию {time.ctime(time.time())} по цене {data_1h["close"].tail(1)[0]}'
+                return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] < 0:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0  and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] < 0:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            # закрыть длинную пощицию
+
+            elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0]:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - закрыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0]:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - закрыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0  and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0]:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - закрыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            # закрыть короткую позицию
+            
+            elif delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0]:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - закрыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0]:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - закрыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            elif delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0]:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - закрыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
             
             else:
                 return f'{from_symbol}/{to_symbol} краткосрок - нет сигналов'
 
         def signal_long_term():
 
-            if (delta_1d.tail(1)[0] > 0 and delta_1d.tail(2)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]) or (delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] < macd_1d['Hist'].tail(3)[0]):
+            # Открыть длинную позицию
 
-                return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию по цене открытия дня {data_1d["open"].tail(1)[0]}'
-            
-            elif (delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]) or (delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0]):
+            if delta_1d.tail(1)[0] > 0 and delta_1d.tail(2)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0:
 
-                return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене открытия дня {data_1d["open"].tail(1)[0]}'
-            
-            elif (delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]) or (delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0]):
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию по цене закрытия дня'
 
-                return f'{from_symbol}/{to_symbol} долгосрок - закрыть длинную позицию по цене открытия дня {data_1d["open"].tail(1)[0]}'
-            
-            elif (delta_1d.tail(1)[0] > 0 and delta_1d.tail(2)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]) or (delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] < macd_1d['Hist'].tail(3)[0]):
+            elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] < macd_1d['Hist'].tail(3)[0] and macd_1d['MACD'].tail(1)[0] > 0:
 
-                return f'{from_symbol}/{to_symbol} долгосрок - закрыть короткую позицию по цене открытия дня {data_1d["open"].tail(1)[0]}'
-            
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию по цене закрытия дня'
+
+            elif delta_1d.tail(1)[0] > 0 and delta_1d.tail(2)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] < macd_1d['Hist'].tail(3)[0] and macd_1d['MACD'].tail(1)[0] > 0:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию по цене закрытия дня'
+
+            # Открыть короткую позицию
+
+            elif delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене по цене закрытия дня'
+
+            elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0] and macd_1d['MACD'].tail(1)[0] < 0:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене закрытия дня'
+
+            elif delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0] and macd_1d['MACD'].tail(1)[0] < 0:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене закрытия дня'
+
+            # закрыть длинную пощицию
+
+            elif delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - закрыть длинную позицию по цене закрытия дня'
+
+            elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0]:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - закрыть длинную позицию по цене закрытия дня'
+
+            elif delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0]:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - закрыть длинную позицию по цене закрытия дня'
+
+            # закрыть короткую позицию
+
+            elif delta_1d.tail(1)[0] > 0 and delta_1d.tail(2)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - закрыть короткую позицию по цене закрытия дня'
+
+            elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] < macd_1d['Hist'].tail(3)[0]:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - закрыть короткую позицию по цене закрытия дня'
+
+            elif delta_1d.tail(1)[0] > 0 and delta_1d.tail(2)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] < macd_1d['Hist'].tail(3)[0]:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - закрыть короткую позицию по цене закрытия дня'
+
             else:
                 return f'{from_symbol}/{to_symbol} долгосрок - нет сигналов'
 
-        def status_transaction():
+        def status_short_term():    
 
-            if delta_1h.tail(1)[0] > 0 and delta_1d.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]:
-                return f'{from_symbol}/{to_symbol}: Держать длинную позицию (краткосрок / долгосрок)'
-            elif delta_1h.tail(1)[0] < 0 and delta_1d.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]:
-                return f'{from_symbol}/{to_symbol}: Держать короткую позицию (краткосрок / долгосрок)'
-            elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0]:
-                return f'{from_symbol}/{to_symbol}: Держать длинную позицию долгосрочно. Краткосрочно  - коррекция, возможно открытие краткосрочной короткой позиции'
-            elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0]:
-                return f'{from_symbol}/{to_symbol}: Держать длинную позицию долгосрочно. Краткосрочно  - коррекция'
-            elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0]:
-                return f'{from_symbol}/{to_symbol}: Держать короткую позицию долгосрочно. Краткосрочно  - коррекция, возможно открытие краткосрочной длинной позиции' 
-            elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0]:
-                return f'{from_symbol}/{to_symbol}: Держать короткую позицию долгосрочно. Краткосрочно  - коррекция' 
-            elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0]:
-                return f'{from_symbol}/{to_symbol}: Держать длинную позицию краткосрочно. Долгосрочно  - коррекция'
-            elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0]:
-                return f'{from_symbol}/{to_symbol}: Держать короткую позицию краткосрочно. Долгосрочно  - коррекция'
+            if delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
+                return f'{from_symbol}/{to_symbol} Держать длинную позицию краткосрочно.'
+
+            elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
+                return f'{from_symbol}/{to_symbol} Держать короткую позицию краткосрочно.'
+
+            elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Коррекция к северному краткосрочному движению.'
+
+            elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Начало краткосрочного роста (MACD < 0).'
+
+            elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Нет явного направления.'
+
+            elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Нет явного направления.'
+
+            elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Начало краткосрочного снижения (MACD > 0).'
+
+            elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Коррекция к южному краткосрочному движению.'
+
             else:
-                return f'{from_symbol}/{to_symbol}: Без позиции'
+                return f'{from_symbol}/{to_symbol} Без позиции.'
 
-        
-        print(time.ctime(time.time()))
+        def status_long_term():    
 
-        status = status_transaction()
-        print(status)
+            if delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0:
+                return f'{from_symbol}/{to_symbol} Держать длинную позицию долгосрочно.'
 
-        signal_short = signal_short_term()
-        print(signal_short)
+            elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
+                return f'{from_symbol}/{to_symbol} Держать короткую позицию долгосрочно.'
 
+            elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Коррекция к северному долгосрочному движению.'
+
+            elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Начало долгосрочного роста (MACD < 0).'
+
+            elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Нет явного направления.'
+
+            elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Нет явного направления.'
+
+            elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Начало долгосрочного снижения (MACD > 0).'
+
+            elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
+                return f'{from_symbol}/{to_symbol} Без позиции. Коррекция к южному долгосрочному движению.'
+
+            else:
+                return f'{from_symbol}/{to_symbol} Без позиции.'
+
+        status_long = status_long_term()
         signal_long = signal_long_term()
-        print(signal_long)
+        status_short = status_short_term()
+        signal_short = signal_short_term()
 
-        tg.telegram_bot_sendtext(f'{time.ctime(time.time())},\n{status},\n{signal_long},\n{signal_short}')
-
+        status =((f'{time.ctime(time.time())}\n\n{from_symbol}/{to_symbol} Долгосрочный статус -\n{status_long}\n{signal_long}\n\n{from_symbol}/{to_symbol} Краткосрочный статус -\n{status_short}\n{signal_short}'))
+        print(status)
+        tg.telegram_bot_sendtext(status)
         time.sleep(30)
 
 job()
