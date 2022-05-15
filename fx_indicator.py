@@ -6,7 +6,7 @@ import AlphaVantage as av
 import time
 
 
-from_symbol = 'AUD'
+from_symbol = 'NZD'
 to_symbol = 'USD'
 interval = '60min'  # 1min, 5min, 15min, 30min, 60min
 outputsize = 'compact'  # Optional compact or full
@@ -14,12 +14,11 @@ apikey = '2GGORTBXQIFSR2AF'
 
 #  Загружаем данные
 
-data_1h_load = av.get_fx_intraday(
-    from_symbol, to_symbol, interval, outputsize, apikey)
-data_1d_load = av.get_fx_daily(from_symbol, to_symbol, outputsize, apikey)
+# data_1h_load = av.get_fx_intraday(from_symbol, to_symbol, interval, outputsize, apikey)
+# data_1d_load = av.get_fx_daily(from_symbol, to_symbol, outputsize, apikey)
 
-data_1h_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1h.csv')
-data_1d_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1d.csv')
+# data_1h_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1h.csv')
+# data_1d_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1d.csv')
 
 # Читаем данные
 
@@ -123,6 +122,10 @@ def signal_short_term():
 
         return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
 
+    elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0 and macd_1h['MACD'].tail(2)[0] < 0:
+
+        return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
+
     # Открыть короткую позицию
 
     elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
@@ -134,6 +137,10 @@ def signal_short_term():
         return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
 
     elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] < 0:
+
+        return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
+
+    elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0 and macd_1h['MACD'].tail(2)[0] > 0:
 
         return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
 
@@ -184,6 +191,10 @@ def signal_long_term():
 
         return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию по цене закрытия дня'
 
+    elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0 and macd_1d['MACD'].tail(2)[0] < 0:
+
+        return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию по цене закрытия дня'
+
     # Открыть короткую позицию
 
     elif delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
@@ -195,6 +206,10 @@ def signal_long_term():
         return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене закрытия дня'
 
     elif delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0] and macd_1d['MACD'].tail(1)[0] < 0:
+
+        return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене закрытия дня'
+
+    elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0 and macd_1d['MACD'].tail(2)[0] > 0:
 
         return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене закрытия дня'
 
@@ -232,60 +247,60 @@ def signal_long_term():
 def status_short_term():
 
     if delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
-        return f'{from_symbol}/{to_symbol}: Держать длинную позицию краткосрочно.'
+        return f'{from_symbol}/{to_symbol} Держать длинную позицию краткосрочно.'
 
     elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
-        return f'{from_symbol}/{to_symbol}: Держать короткую позицию краткосрочно.'
+        return f'{from_symbol}/{to_symbol} Держать короткую позицию краткосрочно.'
 
     elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Коррекция к северному краткосрочному движению.'
+        return f'{from_symbol}/{to_symbol} Без позиции. Коррекция к северному краткосрочному движению.'
 
     elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Начало краткосрочного роста (MACD < 0).'
+        return f'{from_symbol}/{to_symbol} Без позиции. Начало краткосрочного роста (MACD < 0).'
 
     elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Нет явного направления.'
+        return f'{from_symbol}/{to_symbol} Без позиции. Нет явного направления.'
 
     elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Нет явного направления.'
+        return f'{from_symbol}/{to_symbol} Без позиции. Нет явного направления.'
 
     elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Начало краткосрочного снижения (MACD > 0).'
+        return f'{from_symbol}/{to_symbol} Без позиции. Начало краткосрочного снижения (MACD > 0).'
 
     elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Коррекция к южному краткосрочному движению.'
+        return f'{from_symbol}/{to_symbol} Без позиции. Коррекция к южному краткосрочному движению.'
 
     else:
-        return f'{from_symbol}/{to_symbol}: Без позиции.'
+        return f'{from_symbol}/{to_symbol} Без позиции.'
 
 def status_long_term():
 
     if delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0:
-        return f'{from_symbol}/{to_symbol}: Держать длинную позицию долгосрочно.'
+        return f'{from_symbol}/{to_symbol} Держать длинную позицию долгосрочно.'
 
     elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
-        return f'{from_symbol}/{to_symbol}: Держать короткую позицию долгосрочно.'
+        return f'{from_symbol}/{to_symbol} Держать короткую позицию долгосрочно.'
 
     elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Коррекция к северному долгосрочному движению.'
+        return f'{from_symbol}/{to_symbol} Без позиции. Коррекция к северному долгосрочному движению.'
 
     elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Начало долгосрочного роста (MACD < 0).'
+        return f'{from_symbol}/{to_symbol} Без позиции. Начало долгосрочного роста (MACD < 0).'
 
     elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Нет явного направления.'
+        return f'{from_symbol}/{to_symbol} Без позиции. Нет явного направления.'
 
     elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Нет явного направления.'
+        return f'{from_symbol}/{to_symbol} Без позиции. Нет явного направления.'
 
     elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Начало долгосрочного снижения (MACD > 0).'
+        return f'{from_symbol}/{to_symbol} Без позиции. Начало долгосрочного снижения (MACD > 0).'
 
     elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
-        return f'{from_symbol}/{to_symbol}: Без позиции. Коррекция к южному долгосрочному движению.'
+        return f'{from_symbol}/{to_symbol} Без позиции. Коррекция к южному долгосрочному движению.'
 
     else:
-        return f'{from_symbol}/{to_symbol}: Без позиции.'
+        return f'{from_symbol}/{to_symbol} Без позиции.'
 
 
 status_long = status_long_term()
@@ -295,6 +310,9 @@ signal_short = signal_short_term()
 
 status =((f'{time.ctime(time.time())}\n\n{from_symbol}/{to_symbol} Долгосрочный статус -\n{status_long}\n{signal_long}\n\n{from_symbol}/{to_symbol} Краткосрочный статус -\n{status_short}\n{signal_short}'))
 print(status)
+
+status_1 =((f'Долгосрочный статус -\n{status_long}\n{signal_long}'))
+status_2 =((f'Краткосрочный статус -\n{status_short}\n{signal_short}'))
 
 
 # Строим график
@@ -361,11 +379,15 @@ fig.append_trace(go.Scatter(x=delta_1d.index,
                  row=1, col=2)
 
 fig.update_layout(
-                  title=dict(pad=dict(r=100, t=50, b=50), text=f'{from_symbol}/{to_symbol}. Рекомендация - {status}', font=dict(size=10)),
-                  margin=dict(l=100, r=100, t=100, b=100),
+                  title=dict( 
+                  text=f'{from_symbol}/{to_symbol} {time.ctime(time.time())}<br><br><sup>{status_1}</sup><br><sup>{status_2}</sup>', 
+                  font=dict(size=20),
+                  xref="paper", x=0, y=0.95),
+                  margin=dict(l=100, r=100, t=180, b=100),
                   hovermode="x",
                   legend_orientation="v",
                   )
+                 
 
 fig.update_xaxes(
     rangeslider_visible=False,
@@ -380,3 +402,4 @@ fig.update_xaxes(
 
 
 fig.show()
+# fig.write_image(f'images/{from_symbol}{to_symbol}.pdf')

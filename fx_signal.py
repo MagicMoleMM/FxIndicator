@@ -29,11 +29,11 @@ def job():
 
         #  Загружаем данные
 
-        data_1h_load = av.get_fx_intraday(from_symbol, to_symbol, interval, outputsize, apikey)
-        data_1d_load = av.get_fx_daily(from_symbol, to_symbol, outputsize, apikey)
+        # data_1h_load = av.get_fx_intraday(from_symbol, to_symbol, interval, outputsize, apikey)
+        # data_1d_load = av.get_fx_daily(from_symbol, to_symbol, outputsize, apikey)
 
-        data_1h_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1h.csv')
-        data_1d_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1d.csv')
+        # data_1h_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1h.csv')
+        # data_1d_load.to_csv(f'Data_fx/{from_symbol}{to_symbol}_1d.csv')
 
         # # Читаем данные
 
@@ -115,22 +115,26 @@ def job():
 
         def signal_short_term():
 
-            # Открыть длинную позицию
+    # Открыть длинную позицию
 
             if delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0:
 
                 return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
-            
-            elif  delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] > 0:
+
+            elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] > 0:
 
                 return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
 
-            elif  delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] > 0:
+            elif delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] > 0:
 
                 return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
-            
+
+            elif delta_1h.tail(1)[0] > 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] > 0 and macd_1h['MACD'].tail(2)[0] < 0:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - открыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
+
             # Открыть короткую позицию
-            
+
             elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0:
 
                 return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
@@ -139,7 +143,11 @@ def job():
 
                 return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
 
-            elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0  and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] < 0:
+            elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0] and macd_1h['MACD'].tail(1)[0] < 0:
+
+                return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
+
+            elif delta_1h.tail(1)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['MACD'].tail(1)[0] < 0 and macd_1h['MACD'].tail(2)[0] > 0:
 
                 return f'{from_symbol}/{to_symbol} краткосрок - открыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
 
@@ -153,12 +161,12 @@ def job():
 
                 return f'{from_symbol}/{to_symbol} краткосрок - закрыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
 
-            elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0  and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0]:
+            elif delta_1h.tail(1)[0] < 0 and delta_1h.tail(2)[0] > 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] > macd_1h['Hist'].tail(3)[0]:
 
                 return f'{from_symbol}/{to_symbol} краткосрок - закрыть длинную позицию по цене {data_1h["close"].tail(1)[0]}'
 
             # закрыть короткую позицию
-            
+
             elif delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] < macd_1h['Hist'].tail(2)[0]:
 
                 return f'{from_symbol}/{to_symbol} краткосрок - закрыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
@@ -170,7 +178,7 @@ def job():
             elif delta_1h.tail(1)[0] > 0 and delta_1h.tail(2)[0] < 0 and macd_1h['Hist'].tail(1)[0] > macd_1h['Hist'].tail(2)[0] and macd_1h['Hist'].tail(2)[0] < macd_1h['Hist'].tail(3)[0]:
 
                 return f'{from_symbol}/{to_symbol} краткосрок - закрыть короткую позицию по цене {data_1h["close"].tail(1)[0]}'
-            
+
             else:
                 return f'{from_symbol}/{to_symbol} краткосрок - нет сигналов'
 
@@ -190,6 +198,10 @@ def job():
 
                 return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию по цене закрытия дня'
 
+            elif delta_1d.tail(1)[0] > 0 and macd_1d['Hist'].tail(1)[0] > macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] > 0 and macd_1d['MACD'].tail(2)[0] < 0:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть длинную позицию по цене закрытия дня'
+
             # Открыть короткую позицию
 
             elif delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0:
@@ -201,6 +213,10 @@ def job():
                 return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене закрытия дня'
 
             elif delta_1d.tail(1)[0] < 0 and delta_1d.tail(2)[0] > 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['Hist'].tail(2)[0] > macd_1d['Hist'].tail(3)[0] and macd_1d['MACD'].tail(1)[0] < 0:
+
+                return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене закрытия дня'
+
+            elif delta_1d.tail(1)[0] < 0 and macd_1d['Hist'].tail(1)[0] < macd_1d['Hist'].tail(2)[0] and macd_1d['MACD'].tail(1)[0] < 0 and macd_1d['MACD'].tail(2)[0] > 0:
 
                 return f'{from_symbol}/{to_symbol} долгосрок - открыть короткую позицию по цене закрытия дня'
 
@@ -305,7 +321,7 @@ def job():
 
 job()
 
-schedule.every().hour.at(":00").do(job)
+schedule.every().hour.at(":01").do(job)
 
 while True:
     schedule.run_pending()
